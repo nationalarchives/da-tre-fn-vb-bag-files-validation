@@ -7,9 +7,6 @@ on:
       - 'feature/DTE-474/ecr-build'
   # Enable manual run; must be in main branch to be available
   workflow_dispatch:
-permissions:
-  id-token: write  # required by aws-actions/configure-aws-credentials
-  contents: write  # to push new git tag
 jobs:
   terraform-deployment:
     uses: nationalarchives/tre-github-actions/.github/workflows/docker-build-and-ecr-deploy.yml@feature/DTE-551/common-ecr-build
