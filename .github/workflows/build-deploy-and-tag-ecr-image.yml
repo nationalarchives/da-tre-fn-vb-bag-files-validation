@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
 jobs:
   terraform-deployment:
-    uses: nationalarchives/tre-github-actions/.github/workflows/docker-build-and-ecr-deploy.yml@feature/DTE-551/common-ecr-build
+    uses: nationalarchives/tre-github-actions/.github/workflows/docker-build-and-ecr-deploy.yml@0.0.3
     with:
       docker_image_name: 'tre-vb-bag-files-validation'
       build_dir: 'tre-vb-bag-files-validation'
