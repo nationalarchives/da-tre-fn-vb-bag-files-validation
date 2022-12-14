@@ -1,0 +1,22 @@
+# Gets next git version tag, builds and deploys Docker image to ECR; if
+# successful, tags git with new version.
+on:
+  push:
+    branches:
+      - 'main'
+      - 'feature/DTE-474/ecr-build'
+  # Enable manual run; must be in main branch to be available
+  workflow_dispatch:
+jobs:
+  terraform-deployment:
+    uses: nationalarchives/tre-github-actions/.github/workflows/docker-build-and-ecr-deploy.yml@0.0.3
+    with:
+      docker_image_name: 'tre-vb-bag-files-validation'
+      build_dir: 'tre-vb-bag-files-validation'
+      ecr_registry_path: 'tre-v2'
+    secrets:
+      AWS_OPEN_ID_CONNECT_ROLE_ARN: ${{ secrets.AWS_OPEN_ID_CONNECT_ROLE_ARN }}
+      AWS_CODEARTIFACT_REPOSITORY_NAME: ${{ secrets.AWS_CODEARTIFACT_REPOSITORY_NAME }}
+      AWS_CODEARTIFACT_REPOSITORY_DOMAIN: ${{ secrets.AWS_CODEARTIFACT_REPOSITORY_DOMAIN }}
+      AWS_CODEARTIFACT_REPOSITORY_ACCOUNT: ${{ secrets.AWS_CODEARTIFACT_REPOSITORY_ACCOUNT }}
+      AWS_REGION: ${{ secrets.AWS_REGION }}
