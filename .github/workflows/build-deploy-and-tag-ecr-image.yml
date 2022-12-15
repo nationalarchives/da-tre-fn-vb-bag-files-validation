@@ -8,7 +8,7 @@ on:
   # Enable manual run; must be in main branch to be available
   workflow_dispatch:
 jobs:
-  terraform-deployment:
+  ecr-build:
     uses: nationalarchives/tre-github-actions/.github/workflows/docker-build-and-ecr-deploy.yml@0.0.3
     with:
       docker_image_name: 'tre-vb-bag-files-validation'
