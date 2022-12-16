@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - 'main'
-      - 'feature/DTE-474/ecr-build'
   # Enable manual run; must be in main branch to be available
   workflow_dispatch:
 jobs:
