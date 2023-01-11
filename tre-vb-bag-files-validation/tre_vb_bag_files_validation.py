@@ -137,7 +137,7 @@ def handler(event, context):
                 KEY_S3_BUCKET: s3_bucket,
                 KEY_S3_BAGIT_NAME: s3_bagit_name,
                 KEY_S3_OBJECT_ROOT: unpacked_folder_name,
-                KEY_VALIDATED_FILES: checksum_ok_list
+                KEY_VALIDATED_FILES: f'{extracted_data_count} data files in "{consignment_reference}"'
             }
         }
 
