@@ -132,44 +132,29 @@ def handler(event, context):
                 f'Incorrect data file count; {extracted_total_count} extracted'
                 f'but {s3_check_list_count} found')
 
-        output_parameter_block = {
-            EVENT_NAME_OUTPUT_OK: {
-                KEY_REFERENCE: consignment_reference,
-                KEY_S3_BUCKET: s3_bucket,
-                KEY_S3_BAGIT_NAME: s3_bagit_name,
-                KEY_S3_OBJECT_ROOT: unpacked_folder_name,
-                KEY_VALIDATED_FILES: f'{extracted_data_count} data files in "{consignment_reference}"'
+        event_output_ok = {
+            "properties": event['properties'],
+            "parameters" : {
+                "reference" : consignment_reference,
+                "consignmentType" : "COURT_DOCUMENT",
+                "originator": "TDR",
+                "s3Bucket": s3_bucket,
+                "s3ObjectRoot": unpacked_folder_name
             }
         }
-
-        event_output_ok = tre_event_api.create_event(
-            environment=env_environment,
-            producer=env_producer,
-            process=env_process,
-            event_name=EVENT_NAME_OUTPUT_OK,
-            prior_event=event,
-            parameters=output_parameter_block
-        )
 
         logger.info(f'event_output_ok:\n%s\n', event_output_ok)
         return event_output_ok
     except ValueError as e:
         logging.error('handler error: %s', str(e))
-        output_parameter_block = {
-            EVENT_NAME_OUTPUT_ERROR: {
+
+        event_output_error = {
+            "properties": event['properties'],
+            "parameters" : {
                 KEY_REFERENCE: consignment_reference,
                 KEY_ERRORS: [str(e)]
             }
         }
-
-        event_output_error = tre_event_api.create_event(
-            environment=env_environment,
-            producer=env_producer,
-            process=env_process,
-            event_name=EVENT_NAME_OUTPUT_ERROR,
-            prior_event=event,
-            parameters=output_parameter_block
-        )
 
         logger.info(f'event_output_error:\n%s\n', event_output_error)
         return event_output_error
