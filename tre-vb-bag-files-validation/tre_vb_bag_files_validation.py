@@ -132,8 +132,11 @@ def handler(event, context):
                 f'Incorrect data file count; {extracted_total_count} extracted'
                 f'but {s3_check_list_count} found')
 
+        output_event_properties = event['properties']
+        output_event_properties['messageType'] = 'uk.gov.nationalarchives.tre.messages.bag.validate.BagValidate'
+
         event_output_ok = {
-            "properties": event['properties'],
+            "properties": output_event_properties,
             "parameters" : {
                 "reference" : consignment_reference,
                 "consignmentType" : "COURT_DOCUMENT",
@@ -147,7 +150,8 @@ def handler(event, context):
         return event_output_ok
     except ValueError as e:
         logging.error('handler error: %s', str(e))
-
+        output_event_error_properties = event['properties']
+        output_event_error_properties['messageType'] = 'uk.gov.nationalarchives.tre.messages.treerror.TreError'
         event_output_error = {
             "properties": event['properties'],
             "parameters" : {
