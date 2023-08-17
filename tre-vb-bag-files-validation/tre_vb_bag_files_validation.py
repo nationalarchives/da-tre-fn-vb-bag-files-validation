@@ -89,7 +89,7 @@ def handler(event, context):
         output_prefix = output_prefix + \
             '/' if len(output_prefix) > 0 else output_prefix
         extracted_object_list = tar_lib.untar_s3_object(
-            s3_bucket, s3_key, output_prefix=working_key, output_bucket=env_working_bucket)
+            s3_bucket, s3_key, output_prefix=working_key, output_bucket_name=env_working_bucket)
         logger.info('extracted_object_list=%s', extracted_object_list)
 
         # Verify extracted tar content checksums
