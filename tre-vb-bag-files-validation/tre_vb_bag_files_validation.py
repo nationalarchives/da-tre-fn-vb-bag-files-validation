@@ -5,7 +5,6 @@ from s3_lib import checksum_lib
 from s3_lib import tar_lib
 from s3_lib import object_lib
 from s3_lib import common_lib
-import boto3
 from tre_event_lib import tre_event_api
 
 # Set global logging options; AWS environment may override this though
@@ -28,17 +27,16 @@ env_environment = common_lib.get_env_var(
 env_working_bucket = common_lib.get_env_var(
     'TRE_S3_BUCKET', must_exist=True, must_have_value=True)
 
-EVENT_NAME_OUTPUT_OK = 'bagit-validated'
-EVENT_NAME_OUTPUT_ERROR = 'bagit-validation-error'
 
 # input msg has these in the parameters block
 KEY_REFERENCE = 'reference'
 KEY_S3_BUCKET = 's3Bucket'
 KEY_S3_KEY = 's3Key'
-
+KEY_ERRORS = 'errors'
+KEY_S3_BAGIT_NAME = 's3-bagit-name'
 KEY_S3_OBJECT_ROOT = 's3-object-root'
 KEY_VALIDATED_FILES = 'validated-files'
-KEY_ERRORS = 'errors'
+
 
 def handler(event, context):
     """
@@ -59,46 +57,34 @@ def handler(event, context):
     logger.info('handler start"')
     logger.info('type(event)="%s', type(event))
     logger.info('event="%s"', event)
-    # tre_event_api.validate_event(event=event, schema_name=EVENT_NAME_INPUT)
 
     # Get required values from input event's parameters block
     input_params = event['parameters']
     consignment_reference = input_params[KEY_REFERENCE]
     s3_bucket = input_params[KEY_S3_BUCKET]
     s3_key = input_params[KEY_S3_KEY]
+    s3_bagit_name = input_params[KEY_S3_BAGIT_NAME]
     execution_uuid = event['properties']['executionId']
 
-    output_parameter_values = {}
-
     try:
-
-        suffix = '.tar.gz'
-        unpacked_folder_name = s3_key[:-len(suffix)] if s3_key.endswith(suffix) else s3_key
-        # # copy zip file from tdr bucket to tre common bucket
-        # s3 = boto3.resource('s3')
-        # copy_source = {
-        #     'Bucket': s3_bucket,
-        #     'Key': s3_key
-        # }
-        # bucket = s3.Bucket(env_working_bucket)
-        working_key = consignment_reference + '/' + execution_uuid + '/'
-        # bucket.copy(copy_source, working_key)
 
         # Unpack tar in temporary bucket; use path prefix, if there is one
         output_prefix = os.path.split(s3_key)[0]
         output_prefix = output_prefix + \
             '/' if len(output_prefix) > 0 else output_prefix
+        working_key = consignment_reference + '/' + execution_uuid + '/'
         extracted_object_list = tar_lib.untar_s3_object(
             s3_bucket, s3_key, output_prefix=working_key, output_bucket_name=env_working_bucket)
         logger.info('extracted_object_list=%s', extracted_object_list)
 
         # Verify extracted tar content checksums
-
-        output_parameter_values[KEY_S3_OBJECT_ROOT] = unpacked_folder_name
+        suffix = '.tar.gz'
+        unpacked_folder_name = s3_bagit_name[:-len(suffix)] if s3_bagit_name.endswith(suffix) else s3_bagit_name
+        logger.info('unpacked_folder_name=%s', unpacked_folder_name)
         checksum_ok_list = checksum_lib.verify_s3_manifest_checksums(
             s3_bucket, unpacked_folder_name)
         logger.info('checksum_ok_list=%s', checksum_ok_list)
-        output_parameter_values[KEY_VALIDATED_FILES] = checksum_ok_list
+
 
         # Determine expected file counts (from manifest files)
         # not main manifest itself
