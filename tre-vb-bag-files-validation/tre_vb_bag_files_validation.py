@@ -33,14 +33,13 @@ KEY_REFERENCE = 'reference'
 KEY_S3_BUCKET = 's3Bucket'
 KEY_S3_KEY = 's3Key'
 KEY_ERRORS = 'errors'
-KEY_S3_BAGIT_NAME = 's3-bagit-name'
 KEY_S3_OBJECT_ROOT = 's3-object-root'
 KEY_VALIDATED_FILES = 'validated-files'
 
 
 def handler(event, context):
     """
-    Given input fields `s3-bucket` and `s3-bagit-name` in `event`:
+    Given input fields `s3-bucket` and `s3-key` in `event`:
 
     * untar s3://`s3-bucket`/`s3-bagit-name` in place with existing path prefix
     * verify checksums of extracted tar's root files using file tagmanifest-sha256.txt
@@ -63,7 +62,6 @@ def handler(event, context):
     consignment_reference = input_params[KEY_REFERENCE]
     s3_bucket = input_params[KEY_S3_BUCKET]
     s3_key = input_params[KEY_S3_KEY]
-    s3_bagit_name = input_params[KEY_S3_BAGIT_NAME]
     execution_uuid = event['properties']['executionId']
 
     try:
@@ -79,7 +77,7 @@ def handler(event, context):
 
         # Verify extracted tar content checksums
         suffix = '.tar.gz'
-        unpacked_folder_name = s3_bagit_name[:-len(suffix)] if s3_bagit_name.endswith(suffix) else s3_bagit_name
+        unpacked_folder_name = s3_key[:-len(suffix)] if s3_key.endswith(suffix) else s3_key
         logger.info('unpacked_folder_name=%s', unpacked_folder_name)
         checksum_ok_list = checksum_lib.verify_s3_manifest_checksums(
             s3_bucket, unpacked_folder_name)
