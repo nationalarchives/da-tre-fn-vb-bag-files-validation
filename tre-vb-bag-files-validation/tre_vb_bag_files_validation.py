@@ -74,22 +74,22 @@ def handler(event, context):
 
         suffix = '.tar.gz'
         unpacked_folder_name = s3_key[:-len(suffix)] if s3_key.endswith(suffix) else s3_key
-        # copy zip file from tdr bucket to tre common bucket
-        s3 = boto3.resource('s3')
-        copy_source = {
-            'Bucket': s3_bucket,
-            'Key': s3_key
-        }
-        bucket = s3.Bucket(env_working_bucket)
-        working_key = consignment_reference + '/' + execution_uuid + '/' + unpacked_folder_name
-        bucket.copy(copy_source, working_key)
+        # # copy zip file from tdr bucket to tre common bucket
+        # s3 = boto3.resource('s3')
+        # copy_source = {
+        #     'Bucket': s3_bucket,
+        #     'Key': s3_key
+        # }
+        # bucket = s3.Bucket(env_working_bucket)
+        working_key = consignment_reference + '/' + execution_uuid + '/'
+        # bucket.copy(copy_source, working_key)
 
         # Unpack tar in temporary bucket; use path prefix, if there is one
         output_prefix = os.path.split(s3_key)[0]
         output_prefix = output_prefix + \
             '/' if len(output_prefix) > 0 else output_prefix
         extracted_object_list = tar_lib.untar_s3_object(
-            s3_bucket, s3_key, output_prefix=output_prefix)
+            s3_bucket, s3_key, output_prefix=working_key, output_bucket=env_working_bucket)
         logger.info('extracted_object_list=%s', extracted_object_list)
 
         # Verify extracted tar content checksums
