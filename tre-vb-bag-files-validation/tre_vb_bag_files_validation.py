@@ -19,12 +19,8 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 # Get environment variable values
-env_producer = common_lib.get_env_var(
-    'TRE_SYSTEM_NAME', must_exist=True, must_have_value=True)
 env_lambda_function_name = common_lib.get_env_var(
     'TRE_LAMBDA_FUNCTION_NAME', must_exist=True, must_have_value=True)
-env_environment = common_lib.get_env_var(
-    'TRE_ENVIRONMENT', must_exist=True, must_have_value=True)
 env_working_bucket = common_lib.get_env_var(
     'TRE_S3_BUCKET', must_exist=True, must_have_value=True)
 
@@ -33,9 +29,6 @@ env_working_bucket = common_lib.get_env_var(
 KEY_REFERENCE = 'reference'
 KEY_S3_BUCKET = 's3Bucket'
 KEY_S3_KEY = 's3Key'
-KEY_ERRORS = 'errors'
-KEY_S3_OBJECT_ROOT = 's3-object-root'
-KEY_VALIDATED_FILES = 'validated-files'
 
 
 def handler(event, context):
@@ -136,7 +129,7 @@ def handler(event, context):
             }
         }
         if "originator" in input_params:
-            event_output_ok['parameters']['originator'] = input_params['originator']
+            event_output_ok['parameters']['originator'] = 'TRE'
 
         logger.info(f'event_output_ok:\n%s\n', event_output_ok)
         return event_output_ok
@@ -158,7 +151,7 @@ def handler(event, context):
             }
         }
         if "originator" in input_params:
-            event_output_error['parameters']['originator'] = input_params['originator']
+            event_output_error['parameters']['originator'] = 'TRE'
 
         logger.info(f'event_output_error:\n%s\n', event_output_error)
         return event_output_error
