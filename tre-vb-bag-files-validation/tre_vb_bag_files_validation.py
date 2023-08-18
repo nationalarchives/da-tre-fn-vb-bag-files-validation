@@ -117,7 +117,7 @@ def handler(event, context):
                 f'but {extracted_data_count} found')
 
         # Verify there are no additional unexpected files in the s3 location
-        s3_check_dir = f'{working_key}/TDR-2021-CF6L'
+        s3_check_dir = f'{working_key}TDR-2021-CF6L'
         s3_check_list = object_lib.s3_ls(s3_bucket, s3_check_dir)
         s3_check_list_count = len(s3_check_list)
         logger.info('s3_check_list_count=%s s3_check_dir=%s',
