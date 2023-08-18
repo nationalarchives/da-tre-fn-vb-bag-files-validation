@@ -92,7 +92,7 @@ def handler(event, context):
         extracted_total_count = len(extracted_object_list)
 
         # Determine how many of the extracted files are in the data sub-directory
-        data_dir = f'{working_key}/TDR-2021-CF6L/data/'
+        data_dir = f'{working_key}TDR-2021-CF6L/data/'
         data_dir_files = [
             i for i in extracted_object_list if i.startswith(data_dir)]
         extracted_data_count = len(data_dir_files)
