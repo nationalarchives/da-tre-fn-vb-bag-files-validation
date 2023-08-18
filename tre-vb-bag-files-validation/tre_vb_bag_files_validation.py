@@ -135,7 +135,8 @@ def handler(event, context):
                 "s3ObjectRoot": working_folder
             }
         }
-        event_output_ok['parameters']['originator'] = 'mark'
+        if "originator" in event_output_ok
+            event_output_ok['parameters']['originator'] = 'mark'
 
         logger.info(f'event_output_ok:\n%s\n', event_output_ok)
         return event_output_ok
@@ -151,10 +152,13 @@ def handler(event, context):
                 "parentExecutionId": event['properties']['parentExecutionId']
             },
             "parameters": {
-                KEY_REFERENCE: consignment_reference,
-                KEY_ERRORS: [str(e)]
+                "status": "TRE_ERROR",
+                "reference": consignment_reference,
+                "errors": [str(e)]
             }
         }
+        if "originator" in event_output_error
+            event_output_error['parameters']['originator'] = 'mark'
 
         logger.info(f'event_output_error:\n%s\n', event_output_error)
         return event_output_error
