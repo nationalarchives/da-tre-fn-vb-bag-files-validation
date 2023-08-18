@@ -135,8 +135,8 @@ def handler(event, context):
                 "s3ObjectRoot": working_folder
             }
         }
-        if "originator" in event_output_ok:
-            event_output_ok['parameters']['originator'] = 'mark'
+        if "originator" in input_params:
+            event_output_ok['parameters']['originator'] = input_params['originator']
 
         logger.info(f'event_output_ok:\n%s\n', event_output_ok)
         return event_output_ok
@@ -157,8 +157,8 @@ def handler(event, context):
                 "errors": [str(e)]
             }
         }
-        if "originator" in event_output_error:
-            event_output_error['parameters']['originator'] = 'mark'
+        if "originator" in input_params:
+            event_output_error['parameters']['originator'] = input_params['originator']
 
         logger.info(f'event_output_error:\n%s\n', event_output_error)
         return event_output_error
