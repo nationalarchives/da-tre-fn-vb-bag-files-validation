@@ -5,7 +5,8 @@ from s3_lib import checksum_lib
 from s3_lib import tar_lib
 from s3_lib import object_lib
 from s3_lib import common_lib
-from tre_event_lib import tre_event_api
+from datetime import datetime
+
 
 # Set global logging options; AWS environment may override this though
 logging.basicConfig(
@@ -20,8 +21,8 @@ logger.setLevel(logging.INFO)
 # Get environment variable values
 env_producer = common_lib.get_env_var(
     'TRE_SYSTEM_NAME', must_exist=True, must_have_value=True)
-env_process = common_lib.get_env_var(
-    'TRE_PROCESS_NAME', must_exist=True, must_have_value=True)
+env_lambda_function_name = common_lib.get_env_var(
+    'TRE_LAMBDA_FUNCTION_NAME', must_exist=True, must_have_value=True)
 env_environment = common_lib.get_env_var(
     'TRE_ENVIRONMENT', must_exist=True, must_have_value=True)
 env_working_bucket = common_lib.get_env_var(
@@ -39,19 +40,12 @@ KEY_VALIDATED_FILES = 'validated-files'
 
 def handler(event, context):
     """
-    Given input fields `s3-bucket` and `s3-key` in `event`:
+    Given tar at input fields `s3Bucket` and `s3Key` in `event`:
 
-    * untar s3://`s3-bucket`/`s3-bagit-name` in place with existing path prefix
+    * untar to s3://`env_working_bucket`/`reference`/`executionId' (untar adds aslo the existing root folder of reference)
     * verify checksums of extracted tar's root files using file tagmanifest-sha256.txt
     * verify checksums of extracted tar's data directory files using file manifest-sha256.txt
     * verify the number of extracted files matches the numbers in the 2 manifest files
-
-    Expected Input:
-    * A `bagit-received` event
-
-    Output:
-    * A `bagit-validated` event if validation is successful
-    * A `bagit-validation-error` event if validation fails
     """
     logger.info('handler start"')
     logger.info('type(event)="%s', type(event))
@@ -125,11 +119,15 @@ def handler(event, context):
                 f'Incorrect data file count; {extracted_total_count} extracted'
                 f'but {s3_check_list_count} found')
 
-        output_event_properties = event['properties']
-        output_event_properties['messageType'] = 'uk.gov.nationalarchives.tre.messages.bag.validate.BagValidate'
-
         event_output_ok = {
-            "properties": output_event_properties,
+            "properties": {
+                "messageType": "uk.gov.nationalarchives.tre.messages.bag.validate.BagValidate",
+                "timestamp": datetime.now().isoformat() + 'Z',
+                "function": env_lambda_function_name,
+                "producer": "TRE",
+                "executionId": event['properties']['executionId'],
+                "parentExecutionId": event['properties']['parentExecutionId']
+            },
             "parameters": {
                 "reference": consignment_reference,
                 "consignmentType" : "COURT_DOCUMENT",
@@ -143,11 +141,16 @@ def handler(event, context):
         return event_output_ok
     except ValueError as e:
         logging.error('handler error: %s', str(e))
-        output_event_error_properties = event['properties']
-        output_event_error_properties['messageType'] = 'uk.gov.nationalarchives.tre.messages.treerror.TreError'
         event_output_error = {
-            "properties": event['properties'],
-            "parameters" : {
+            "properties": {
+                "messageType": "uk.gov.nationalarchives.tre.messages.treerror.TreError",
+                "timestamp": datetime.now().isoformat() + 'Z',
+                "function": env_lambda_function_name,
+                "producer": "TRE",
+                "executionId": event['properties']['executionId'],
+                "parentExecutionId": event['properties']['parentExecutionId']
+            },
+            "parameters": {
                 KEY_REFERENCE: consignment_reference,
                 KEY_ERRORS: [str(e)]
             }
