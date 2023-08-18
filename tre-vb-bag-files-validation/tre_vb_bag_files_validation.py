@@ -66,10 +66,7 @@ def handler(event, context):
 
     try:
 
-        # Unpack tar in temporary bucket; use path prefix, if there is one
-        output_prefix = os.path.split(s3_key)[0]
-        output_prefix = output_prefix + \
-            '/' if len(output_prefix) > 0 else output_prefix
+        # Unpack tar in working bucket
         working_key = consignment_reference + '/' + execution_uuid + '/'
         extracted_object_list = tar_lib.untar_s3_object(
             s3_bucket, s3_key, output_prefix=working_key, output_bucket_name=env_working_bucket)
@@ -95,7 +92,7 @@ def handler(event, context):
         extracted_total_count = len(extracted_object_list)
 
         # Determine how many of the extracted files are in the data sub-directory
-        data_dir = f'{unpacked_folder_name}/data/'
+        data_dir = f'{working_key}/TDR-2021-CF6L/data/'
         data_dir_files = [
             i for i in extracted_object_list if i.startswith(data_dir)]
         extracted_data_count = len(data_dir_files)
@@ -120,7 +117,7 @@ def handler(event, context):
                 f'but {extracted_data_count} found')
 
         # Verify there are no additional unexpected files in the s3 location
-        s3_check_dir = f'{unpacked_folder_name}/'
+        s3_check_dir = f'{working_key}/TDR-2021-CF6L'
         s3_check_list = object_lib.s3_ls(s3_bucket, s3_check_dir)
         s3_check_list_count = len(s3_check_list)
         logger.info('s3_check_list_count=%s s3_check_dir=%s',
