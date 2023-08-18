@@ -72,7 +72,7 @@ def handler(event, context):
         extracted_object_list = tar_lib.untar_s3_object(
             s3_bucket, s3_key, output_prefix=working_folder_prefix, output_bucket_name=env_working_bucket)
         logger.info('extracted_object_list=%s', extracted_object_list)
-        working_folder = working_folder_prefix + 'TDR-2021-CF6L'
+        working_folder = working_folder_prefix + consignment_reference
         logger.info('working_folder=%s', working_folder)
         # Verify extracted tar content checksums
         checksum_ok_list = checksum_lib.verify_s3_manifest_checksums(
