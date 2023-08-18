@@ -67,17 +67,16 @@ def handler(event, context):
     try:
 
         # Unpack tar in working bucket
-        working_key = consignment_reference + '/' + execution_uuid + '/'
+        working_folder_prefix = consignment_reference + '/' + execution_uuid + '/'
+        logger.info('working_folder_prefix=%s', working_folder_prefix)
         extracted_object_list = tar_lib.untar_s3_object(
-            s3_bucket, s3_key, output_prefix=working_key, output_bucket_name=env_working_bucket)
+            s3_bucket, s3_key, output_prefix=working_folder_prefix, output_bucket_name=env_working_bucket)
         logger.info('extracted_object_list=%s', extracted_object_list)
-
+        working_folder = working_folder_prefix + 'TDR-2021-CF6L/'
+        logger.info('working_folder=%s', working_folder)
         # Verify extracted tar content checksums
-        suffix = '.tar.gz'
-        unpacked_folder_name = s3_key[:-len(suffix)] if s3_key.endswith(suffix) else s3_key
-        logger.info('unpacked_folder_name=%s', unpacked_folder_name)
         checksum_ok_list = checksum_lib.verify_s3_manifest_checksums(
-            env_working_bucket, working_key + 'TDR-2021-CF6L')
+            env_working_bucket, working_folder)
         logger.info('checksum_ok_list=%s', checksum_ok_list)
 
 
@@ -92,7 +91,7 @@ def handler(event, context):
         extracted_total_count = len(extracted_object_list)
 
         # Determine how many of the extracted files are in the data sub-directory
-        data_dir = f'{working_key}TDR-2021-CF6L/data/'
+        data_dir = f'{working_folder_prefix}TDR-2021-CF6L/data/'
         data_dir_files = [
             i for i in extracted_object_list if i.startswith(data_dir)]
         extracted_data_count = len(data_dir_files)
@@ -117,7 +116,7 @@ def handler(event, context):
                 f'but {extracted_data_count} found')
 
         # Verify there are no additional unexpected files in the s3 location
-        s3_check_dir = f'{working_key}TDR-2021-CF6L'
+        s3_check_dir = f'{working_folder_prefix}TDR-2021-CF6L'
         s3_check_list = object_lib.s3_ls(s3_bucket, s3_check_dir)
         s3_check_list_count = len(s3_check_list)
         logger.info('s3_check_list_count=%s s3_check_dir=%s',
@@ -137,7 +136,7 @@ def handler(event, context):
                 "consignmentType" : "COURT_DOCUMENT",
                 "originator": "TDR",
                 "s3Bucket": s3_bucket,
-                "s3ObjectRoot": unpacked_folder_name
+                "s3ObjectRoot": working_folder
             }
         }
 
