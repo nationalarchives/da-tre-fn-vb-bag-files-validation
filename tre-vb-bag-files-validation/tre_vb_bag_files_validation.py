@@ -72,7 +72,7 @@ def handler(event, context):
         extracted_object_list = tar_lib.untar_s3_object(
             s3_bucket, s3_key, output_prefix=working_folder_prefix, output_bucket_name=env_working_bucket)
         logger.info('extracted_object_list=%s', extracted_object_list)
-        working_folder = working_folder_prefix + 'TDR-2021-CF6L/'
+        working_folder = working_folder_prefix + 'TDR-2021-CF6L'
         logger.info('working_folder=%s', working_folder)
         # Verify extracted tar content checksums
         checksum_ok_list = checksum_lib.verify_s3_manifest_checksums(
@@ -91,7 +91,7 @@ def handler(event, context):
         extracted_total_count = len(extracted_object_list)
 
         # Determine how many of the extracted files are in the data sub-directory
-        data_dir = f'{working_folder_prefix}TDR-2021-CF6L/data/'
+        data_dir = f'{working_folder}/data/'
         data_dir_files = [
             i for i in extracted_object_list if i.startswith(data_dir)]
         extracted_data_count = len(data_dir_files)
@@ -116,11 +116,10 @@ def handler(event, context):
                 f'but {extracted_data_count} found')
 
         # Verify there are no additional unexpected files in the s3 location
-        s3_check_dir = f'{working_folder_prefix}TDR-2021-CF6L'
-        s3_check_list = object_lib.s3_ls(s3_bucket, s3_check_dir)
+        s3_check_list = object_lib.s3_ls(s3_bucket, working_folder)
         s3_check_list_count = len(s3_check_list)
         logger.info('s3_check_list_count=%s s3_check_dir=%s',
-                    s3_check_list_count, s3_check_dir)
+                    s3_check_list_count, working_folder)
         if s3_check_list_count != extracted_total_count:
             raise ValueError(
                 f'Incorrect data file count; {extracted_total_count} extracted'
