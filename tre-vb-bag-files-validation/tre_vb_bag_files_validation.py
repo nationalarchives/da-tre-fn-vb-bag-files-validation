@@ -130,14 +130,14 @@ def handler(event, context):
 
         event_output_ok = {
             "properties": output_event_properties,
-            "parameters" : {
-                "reference" : consignment_reference,
+            "parameters": {
+                "reference": consignment_reference,
                 "consignmentType" : "COURT_DOCUMENT",
-                "originator": "TDR",
                 "s3Bucket": s3_bucket,
                 "s3ObjectRoot": working_folder
             }
         }
+        event_output_ok['parameters']['originator'] = 'mark'
 
         logger.info(f'event_output_ok:\n%s\n', event_output_ok)
         return event_output_ok
