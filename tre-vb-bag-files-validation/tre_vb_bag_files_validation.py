@@ -77,7 +77,7 @@ def handler(event, context):
         unpacked_folder_name = s3_key[:-len(suffix)] if s3_key.endswith(suffix) else s3_key
         logger.info('unpacked_folder_name=%s', unpacked_folder_name)
         checksum_ok_list = checksum_lib.verify_s3_manifest_checksums(
-            s3_bucket, unpacked_folder_name)
+            env_working_bucket, working_key)
         logger.info('checksum_ok_list=%s', checksum_ok_list)
 
 
