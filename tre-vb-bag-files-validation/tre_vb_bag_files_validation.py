@@ -103,7 +103,7 @@ def handler(event, context):
                 f'but {extracted_data_count} found')
 
         # Verify there are no additional unexpected files in the s3 location
-        s3_check_list = object_lib.s3_ls(s3_bucket, working_folder)
+        s3_check_list = object_lib.s3_ls(env_working_bucket, working_folder)
         s3_check_list_count = len(s3_check_list)
         logger.info('s3_check_list_count=%s s3_check_dir=%s',
                     s3_check_list_count, working_folder)
@@ -129,7 +129,7 @@ def handler(event, context):
             }
         }
         if "originator" in input_params:
-            event_output_ok['parameters']['originator'] = 'TRE'
+            event_output_ok['parameters']['originator'] = input_params['originator']
 
         logger.info(f'event_output_ok:\n%s\n', event_output_ok)
         return event_output_ok
@@ -151,7 +151,7 @@ def handler(event, context):
             }
         }
         if "originator" in input_params:
-            event_output_error['parameters']['originator'] = 'TRE'
+            event_output_error['parameters']['originator'] = input_params['originator']
 
         logger.info(f'event_output_error:\n%s\n', event_output_error)
         return event_output_error
