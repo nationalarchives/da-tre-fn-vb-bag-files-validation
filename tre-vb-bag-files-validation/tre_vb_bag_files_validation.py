@@ -129,7 +129,7 @@ def handler(event, context):
             }
         }
         if "originator" in input_params:
-            event_output_ok['parameters']['originator'] = 'TDR'
+            event_output_ok['parameters']['originator'] = input_params['originator']
 
         logger.info(f'event_output_ok:\n%s\n', event_output_ok)
         return event_output_ok
@@ -151,7 +151,7 @@ def handler(event, context):
             }
         }
         if "originator" in input_params:
-            event_output_error['parameters']['originator'] = 'TRE'
+            event_output_error['parameters']['originator'] = input_params['originator']
 
         logger.info(f'event_output_error:\n%s\n', event_output_error)
         return event_output_error
