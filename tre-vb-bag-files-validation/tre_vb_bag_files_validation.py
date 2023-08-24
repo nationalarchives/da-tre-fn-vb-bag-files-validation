@@ -124,7 +124,7 @@ def handler(event, context):
             "parameters": {
                 "reference": consignment_reference,
                 "consignmentType" : "COURT_DOCUMENT",
-                "s3Bucket": s3_bucket,
+                "s3Bucket": env_working_bucket,
                 "s3ObjectRoot": working_folder
             }
         }
