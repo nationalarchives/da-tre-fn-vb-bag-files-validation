@@ -28,12 +28,12 @@ env_working_bucket = common_lib.get_env_var(
 # input msg has these in the parameters block
 KEY_REFERENCE = 'reference'
 KEY_S3_BUCKET = 's3Bucket'
-KEY_S3_KEY = 's3Key'
+KEY_S3_BAGKEY = 's3BagKey'
 
 
 def handler(event, context):
     """
-    Given tar at input fields `s3Bucket` and `s3Key` in `event`:
+    Given tar at input fields `s3Bucket` and `s3BagKey` in `event`:
 
     * untar to s3://`env_working_bucket`/`reference`/`executionId' (untar adds aslo the existing root folder of reference)
     * verify checksums of extracted tar's root files using file tagmanifest-sha256.txt
@@ -48,7 +48,7 @@ def handler(event, context):
     input_params = event['parameters']
     consignment_reference = input_params[KEY_REFERENCE]
     s3_bucket = input_params[KEY_S3_BUCKET]
-    s3_key = input_params[KEY_S3_KEY]
+    s3_bag_key = input_params[KEY_S3_BAGKEY]
     execution_uuid = event['properties']['executionId']
 
     try:
@@ -57,7 +57,7 @@ def handler(event, context):
         working_folder_prefix = consignment_reference + '/' + execution_uuid + '/'
         logger.info('working_folder_prefix=%s', working_folder_prefix)
         extracted_object_list = tar_lib.untar_s3_object(
-            s3_bucket, s3_key, output_prefix=working_folder_prefix, output_bucket_name=env_working_bucket)
+            s3_bucket, s3_bag_key, output_prefix=working_folder_prefix, output_bucket_name=env_working_bucket)
         logger.info('extracted_object_list=%s', extracted_object_list)
         working_folder = working_folder_prefix + consignment_reference
         logger.info('working_folder=%s', working_folder)
