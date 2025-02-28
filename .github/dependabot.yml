@@ -1,0 +1,10 @@
+version: 2
+updates:
+  - package-ecosystem: "pip"
+    directory: "/tre-vb-bag-files-validation"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "docker"
+    directory: "/tre-vb-bag-files-validation"
+    schedule:
+      interval: "daily"
