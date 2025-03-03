@@ -6,9 +6,9 @@ COPY tre_vb_bag_files_validation.py ${LAMBDA_TASK_ROOT}
 
 # Install the function's dependencies using file requirements.txt
 COPY requirements.txt ./requirements.txt
-RUN  yum -y update \
-     && yum clean all \
-     && pip install \
+RUN dnf upgrade
+RUN dnf clean all \
+RUN pip install \
        --requirement requirements.txt \
        --target "${LAMBDA_TASK_ROOT}"
 
