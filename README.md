@@ -13,15 +13,15 @@
 
 Secret for main AWS authentication (using OpenID Connect):
 
-| Name                         | Description                                          |
-| ---------------------------- | ---------------------------------------------------- |
-| AWS_OPEN_ID_CONNECT_ROLE_ARN | ARN of AWS role used to authenticate GitHub with AWS |
+| Name                         | Description                                               |
+| ---------------------------- |-----------------------------------------------------------|
+| AWS\_OPEN\_ID\_CONNECT\_ROLE\_ARN | ARN of AWS role used to authenticate GitHub with AWS |
 
 Other secrets:
 
-| Name                                | Description                                                              |
-| ----------------------------------- | ------------------------------------------------------------------------ |
-| AWS_CODEARTIFACT_REPOSITORY_NAME    | Name of AWS CodeArtifact repository to log in to for additional packages |
-| AWS_CODEARTIFACT_REPOSITORY_DOMAIN  | Name of AWS CodeArtifact repository's domain                             |
-| AWS_CODEARTIFACT_REPOSITORY_ACCOUNT | The AWS account ID that owns the CodeArtifact                            |
-| AWS_REGION                          | The AWS region to use for CodeArtifact and ECR                           |
+| Name                                | Description                                                                 |
+| ----------------------------------- |-----------------------------------------------------------------------------|
+| AWS\_CODEARTIFACT\_REPOSITORY\_NAME    | Name of AWS CodeArtifact repository to log in to for additional packages |
+| AWS\_CODEARTIFACT\_REPOSITORY\_DOMAIN  | Name of AWS CodeArtifact repository's domain                             |
+| AWS\_CODEARTIFACT\_REPOSITORY\_ACCOUNT | The AWS account ID that owns the CodeArtifact                            |
+| AWS\_REGION                          | The AWS region to use for CodeArtifact and ECR                             |
