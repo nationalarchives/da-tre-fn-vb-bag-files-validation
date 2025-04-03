@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 jobs:
   ecr-build:
-    uses: nationalarchives/da-tre-github-actions/.github/workflows/docker-build-and-ecr-deploy-using-code-artifact.yml@0.0.9
+    uses: nationalarchives/da-tre-github-actions/.github/workflows/docker-build-and-ecr-deploy-using-code-artifact.yml@0.0.45
     with:
       docker_image_name: 'tre-vb-bag-files-validation'
       build_dir: 'tre-vb-bag-files-validation'
@@ -19,3 +19,6 @@ jobs:
       AWS_CODEARTIFACT_REPOSITORY_DOMAIN: ${{ secrets.AWS_CODEARTIFACT_REPOSITORY_DOMAIN }}
       AWS_CODEARTIFACT_REPOSITORY_ACCOUNT: ${{ secrets.AWS_CODEARTIFACT_REPOSITORY_ACCOUNT }}
       AWS_REGION: ${{ secrets.AWS_REGION }}
+      WIZ_CLIENT_ID: ${{ secrets.WIZ_CLIENT_ID }}
+      WIZ_CLIENT_SECRET: ${{ secrets.WIZ_CLIENT_SECRET }}
+      WIZ_PROJECT_TRE: ${{ secrets.WIZ_PROJECT_TRE }}
