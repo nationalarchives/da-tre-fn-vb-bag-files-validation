@@ -1,4 +1,4 @@
 requests~=2.32.3
-jsonschema~=4.23.0
+jsonschema~=4.24.0
 s3-lib~=0.0.1
 
