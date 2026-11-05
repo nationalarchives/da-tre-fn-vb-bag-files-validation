@@ -1,4 +1,4 @@
-FROM public.ecr.aws/lambda/python:3.14
+FROM public.ecr.aws/lambda/python:3.15
 ARG PIP_INDEX_URL
 
 # Copy function code
